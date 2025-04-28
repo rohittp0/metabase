@@ -1,0 +1,41 @@
+services:
+  nginx:
+    image: rohittp0/nginx-secure:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - MAPPINGS=${HOST}=metabase:3000
+      - SSL_ENABLED=${SSL_ENABLED}
+      - DEBUG=${DEBUG}
+    volumes:
+      - certs:/etc/letsencrypt/
+
+  db:
+    image: postgis/postgis:17-master
+    hostname: db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  metabase:
+    image: metabase/metabase:latest
+    hostname: metabase
+    volumes:
+      - /dev/urandom:/dev/random:ro
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_PORT: "5432"
+      MB_DB_HOST: db
+      MB_DB_DBNAME: ${POSTGRES_DB}
+      MB_DB_USER: ${POSTGRES_USER}
+      MB_DB_PASS: ${POSTGRES_PASSWORD}
+
+volumes:
+  certs:
+    driver: local
+  postgres:
+    driver: local
