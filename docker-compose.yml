@@ -10,6 +10,7 @@ services:
       - DEBUG=${DEBUG}
     volumes:
       - certs:/etc/letsencrypt/
+    restart: always
 
   db:
     image: postgis/postgis:17-master
@@ -20,6 +21,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres:/var/lib/postgresql/data
+    restart: always
 
   metabase:
     image: metabase/metabase:latest
@@ -33,6 +35,7 @@ services:
       MB_DB_DBNAME: ${POSTGRES_DB}
       MB_DB_USER: ${POSTGRES_USER}
       MB_DB_PASS: ${POSTGRES_PASSWORD}
+    restart: always
 
 volumes:
   certs:
